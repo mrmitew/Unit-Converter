@@ -90,7 +90,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
       centerTitle: true,
       title: Text(
         "Unit Converter",
-        style: TextStyle(fontSize: 30.0),
+        style: TextStyle(fontSize: 25.0, color: Colors.black),
       ),
       elevation: 0.0,
     );
