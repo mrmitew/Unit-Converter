@@ -213,11 +213,13 @@ class _ConverterRouteState extends State<ConverterRoute> {
     setState(() {
       _covertToUnit = value;
     });
+    _updateConversion();
   }
 
   void onFromUnitChanged(Unit value) {
     setState(() {
       _covertFromUnit = value;
     });
+    _updateConversion();
   }
 }
