@@ -12,15 +12,15 @@ import 'package:meta/meta.dart';
 ///
 /// While it is named ConverterRoute, a more apt name would be ConverterScreen,
 /// because it is responsible for the UI at the route's destination.
-class ConverterRoute extends StatefulWidget {
+class UnitConverter extends StatefulWidget {
   final ColorSwatch color;
   final String name;
 
   /// Units for this [Category].
   final List<Unit> units;
 
-  /// This [ConverterRoute] requires the name, color, and units to not be null.
-  const ConverterRoute({
+  /// This [UnitConverter] requires the name, color, and units to not be null.
+  const UnitConverter({
     @required this.name,
     @required this.color,
     @required this.units,
@@ -30,7 +30,7 @@ class ConverterRoute extends StatefulWidget {
   State<StatefulWidget> createState() => _ConverterRouteState();
 }
 
-class _ConverterRouteState extends State<ConverterRoute> {
+class _ConverterRouteState extends State<UnitConverter> {
   Unit _covertFromUnit;
   Unit _covertToUnit;
   double _input;
@@ -89,7 +89,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
     final appBar =
         AppBar(backgroundColor: widget.color, title: Text(widget.name));
 
-    var unitInput1 = buildUnitInput(context, onFromUnitChanged, _covertFromUnit);
+    var unitInput1 =
+        buildUnitInput(context, onFromUnitChanged, _covertFromUnit);
     var unitInput2 = buildUnitInput(context, onToUnitChanged, _covertToUnit);
 
     var fromGroup = Padding(
@@ -205,7 +206,8 @@ class _ConverterRouteState extends State<ConverterRoute> {
 
   void _updateConversion() {
     setState(() {
-      _convertedValue = _format(_input * (_covertToUnit.conversion / _covertFromUnit.conversion));
+      _convertedValue = _format(
+          _input * (_covertToUnit.conversion / _covertFromUnit.conversion));
     });
   }
 

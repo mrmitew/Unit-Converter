@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:hello_rectangle/category.dart';
+import 'package:hello_rectangle/category_tile.dart';
 import 'package:hello_rectangle/converter_route.dart';
 import 'package:hello_rectangle/unit.dart';
-
-import 'category.dart';
 
 /// Category Route (screen).
 ///
@@ -88,14 +88,24 @@ class _CategoryRouteState extends State<CategoryRoute> {
   void initState() {
     super.initState();
     for (var i = 0; i < _categoryNames.length; i++) {
-      categories.add(_buildCategory(
-        context,
-        _categoryNames[i],
-        Icons.cake,
-        _baseColors[i],
-        _retrieveUnitList(_categoryNames[i]),
-      ));
+      final category = Category(
+          categoryName: _categoryNames[i],
+          categoryIcon: Icons.cake,
+          categoryColor: _baseColors[i],
+          units: _retrieveUnitList(_categoryNames[i]));
+      categories.add(category);
     }
+  }
+
+  Widget _buildCategoryTileWidgets() {
+    return ListView.builder(
+      itemBuilder: (context, index) => CategoryTile(
+            category: categories[index],
+            categoryTapCallback: (Category category) =>
+                _navigateToConverter(context, category),
+          ),
+      itemCount: categories.length,
+    );
   }
 
   @override
@@ -104,10 +114,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
         color: _mainColor,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: ListView.builder(
-            itemBuilder: (context, index) => categories[index],
-            itemCount: _categoryNames.length,
-          ),
+          child: _buildCategoryTileWidgets(),
         ));
 
     final appBar = AppBar(
@@ -126,20 +133,10 @@ class _CategoryRouteState extends State<CategoryRoute> {
     );
   }
 
-  Category _buildCategory(BuildContext context, String name, IconData icon,
-          ColorSwatch color, List<Unit> units) =>
-      Category(
-          categoryName: name,
-          categoryIcon: icon,
-          categoryColor: color,
-          units: units,
-          categoryTapCallback: (Category category) =>
-              _navigateToConverter(context, category));
-
   void _navigateToConverter(BuildContext context, Category category) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
-        return ConverterRoute(
+        return UnitConverter(
           color: category.categoryColor,
           name: category.categoryName,
           units: category.units,
