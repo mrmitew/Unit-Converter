@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:hello_rectangle/unit.dart';
 
 class Category {
-  final String categoryName;
-  final IconData categoryIcon;
-  final ColorSwatch categoryColor;
+  final String name;
+  final IconData icon;
+  final ColorSwatch color;
   final List<Unit> units;
 
   /// Creates a [Category].
@@ -18,12 +18,12 @@ class Category {
   /// A [Category] saves the name of the Category (e.g. 'Length'), its color for
   /// the UI, and the icon that represents it (e.g. a ruler).
   const Category(
-      {@required this.categoryName,
-      @required this.categoryIcon,
-      @required this.categoryColor,
+      {@required this.name,
+      @required this.icon,
+      @required this.color,
       @required this.units})
-      : assert(categoryName != null),
-        assert(categoryIcon != null),
-        assert(categoryColor != null),
+      : assert(name != null),
+        assert(icon != null),
+        assert(color != null),
         assert(units != null);
 }

@@ -231,7 +231,7 @@ class _BackdropState extends State<Backdrop>
 
     return Container(
       key: _backdropKey,
-      color: widget.currentCategory.categoryColor,
+      color: widget.currentCategory.color,
       child: Stack(
         children: <Widget>[
           widget.backPanel,
@@ -241,7 +241,7 @@ class _BackdropState extends State<Backdrop>
               onTap: _toggleBackdropPanelVisibility,
               onVerticalDragUpdate: _handleDragUpdate,
               onVerticalDragEnd: _handleDragEnd,
-              title: Text(widget.currentCategory.categoryName),
+              title: Text(widget.currentCategory.name),
               child: widget.frontPanel,
             ),
           ),
@@ -254,7 +254,7 @@ class _BackdropState extends State<Backdrop>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: widget.currentCategory.categoryColor,
+        backgroundColor: widget.currentCategory.color,
         elevation: 0.0,
         leading: IconButton(
           onPressed: _toggleBackdropPanelVisibility,

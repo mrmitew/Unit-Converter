@@ -31,8 +31,8 @@ class CategoryTile extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        highlightColor: category.categoryColor["highlight"],
-        splashColor: category.categoryColor["splash"],
+        highlightColor: category.color["highlight"],
+        splashColor: category.color["splash"],
         borderRadius: BorderRadius.all(Radius.circular(_rowHeight / 2)),
         onTap: () {
           if (categoryTapCallback != null) categoryTapCallback(category);
@@ -45,12 +45,12 @@ class CategoryTile extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Icon(
-                  category.categoryIcon,
+                  category.icon,
                   size: 60.0,
                 ),
               ),
               Text(
-                category.categoryName,
+                category.name,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 24.0),
               ),

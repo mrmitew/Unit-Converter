@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:hello_rectangle/category.dart';
 import 'package:hello_rectangle/unit.dart';
 import 'package:meta/meta.dart';
 
@@ -13,18 +14,11 @@ import 'package:meta/meta.dart';
 /// While it is named ConverterRoute, a more apt name would be ConverterScreen,
 /// because it is responsible for the UI at the route's destination.
 class UnitConverter extends StatefulWidget {
-  final ColorSwatch color;
-  final String name;
+  final Category category;
 
-  /// Units for this [Category].
-  final List<Unit> units;
-
-  /// This [UnitConverter] requires the name, color, and units to not be null.
   const UnitConverter({
-    @required this.name,
-    @required this.color,
-    @required this.units,
-  }) : assert(units != null);
+    @required this.category,
+  }) : assert(category != null);
 
   @override
   State<StatefulWidget> createState() => _ConverterRouteState();
@@ -36,11 +30,10 @@ class _ConverterRouteState extends State<UnitConverter> {
   double _input;
 
   bool _validationFailed = false;
+  String _convertFromValue = "";
   String _convertedValue = "";
 
   List<DropdownMenuItem<Unit>> _unitWidgets;
-
-  // TODO: Determine whether you need to override anything, such as initState()
 
   /// Clean up conversion; trim trailing zeros, e.g. 5.500 -> 5.5, 10.0 -> 10
   String _format(double conversion) {
@@ -62,15 +55,36 @@ class _ConverterRouteState extends State<UnitConverter> {
   void initState() {
     super.initState();
     _buildDropDownMenuItems();
-    // TODO: _setDefaults()
+    _setDefaults();
+  }
+
+  @override
+  void didUpdateWidget(UnitConverter old) {
+    super.didUpdateWidget(old);
+    // We update our [DropdownMenuItem] units when we switch [Categories].
+    if (old.category != widget.category) {
+      _buildDropDownMenuItems();
+      _setDefaults();
+    }
   }
 
   // TODO: _createDropdownMenuItems() and _setDefaults() should also be called
   // each time the user switches [Categories].
 
+  /// Sets the default values for the 'from' and 'to' [Dropdown]s, and the
+  /// updated output value if a user had previously entered an input.
+  void _setDefaults() {
+    setState(() {
+      _covertFromUnit = widget.category.units[0];
+      _covertToUnit = widget.category.units[1];
+      _convertFromValue = "";
+      _convertedValue = "";
+    });
+  }
+
   void _buildDropDownMenuItems() {
     // Here is just a placeholder for a list of mock units
-    var unitWidgets = widget.units.map((Unit unit) {
+    var unitWidgets = widget.category.units.map((Unit unit) {
       return DropdownMenuItem<Unit>(
         child: Column(
           children: <Widget>[
@@ -90,9 +104,6 @@ class _ConverterRouteState extends State<UnitConverter> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar =
-        AppBar(backgroundColor: widget.color, title: Text(widget.name));
-
     var unitInput1 =
         buildUnitInput(context, onFromUnitChanged, _covertFromUnit);
     var unitInput2 = buildUnitInput(context, onToUnitChanged, _covertToUnit);
@@ -103,6 +114,7 @@ class _ConverterRouteState extends State<UnitConverter> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           TextField(
+            controller: TextEditingController(text: _convertFromValue),
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
               errorText: _validationFailed ? 'Validation failed' : null,
@@ -153,13 +165,7 @@ class _ConverterRouteState extends State<UnitConverter> {
       ],
     );
 
-    final scaffold = Scaffold(
-      appBar: appBar,
-      body: body,
-      resizeToAvoidBottomPadding: false,
-    );
-
-    return scaffold;
+    return body;
   }
 
   Container buildUnitInput(BuildContext context,
@@ -171,9 +177,7 @@ class _ConverterRouteState extends State<UnitConverter> {
           border: Border.all(color: Colors.grey[400], width: 1.0)),
       padding: EdgeInsets.symmetric(vertical: 8.0),
       child: Theme(
-        data: Theme.of(context).copyWith(
-          canvasColor: Colors.grey[50],
-        ),
+        data: Theme.of(context).copyWith(canvasColor: Colors.grey[50]),
         child: DropdownButtonHideUnderline(
           child: ButtonTheme(
             alignedDropdown: true,
@@ -192,6 +196,8 @@ class _ConverterRouteState extends State<UnitConverter> {
     bool isInvalidValue = value.isEmpty || value == null;
 
     _validationFailed = isInvalidValue;
+
+    _convertFromValue = value;
 
     if (isInvalidValue) {
       _input = 0.0;
