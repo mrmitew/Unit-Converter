@@ -76,7 +76,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }),
   ];
 
-  final categories = <Category>[];
+  final _categories = <Category>[];
   Category _currentCategory;
 
   /// Returns a list of mock [Unit]s.
@@ -99,26 +99,45 @@ class _CategoryRouteState extends State<CategoryRoute> {
           icon: Icons.cake,
           color: _baseColors[i],
           units: _retrieveUnitList(_categoryNames[i]));
-      categories.add(category);
+      _categories.add(category);
     }
 
-    _currentCategory = categories[defaultCategoryIndex];
+    _currentCategory = _categories[defaultCategoryIndex];
   }
 
   Widget _buildCategoryTileWidgets() {
+    final categoryList = OrientationBuilder(
+      builder: (BuildContext context, Orientation orientation) {
+        if (orientation == Orientation.portrait) {
+          return ListView.builder(
+            itemBuilder: (context, index) => CategoryTile(
+                  category: _categories[index],
+                  categoryTapCallback: (Category category) =>
+                      _onCategoryTap(category),
+                ),
+            itemCount: _categories.length,
+          );
+        } else {
+          return GridView.count(
+              crossAxisCount: 2,
+              childAspectRatio: 3.0,
+              children: _categories.map((Category cat) {
+                return CategoryTile(
+                  category: cat,
+                  categoryTapCallback: (Category category) =>
+                      _onCategoryTap(category),
+                );
+              }).toList());
+        }
+      },
+    );
+
     return Backdrop(
       currentCategory: _currentCategory,
       frontPanel: UnitConverter(category: _currentCategory),
       backPanel: Padding(
         padding: const EdgeInsets.only(bottom: 48.0),
-        child: ListView.builder(
-          itemBuilder: (context, index) => CategoryTile(
-                category: categories[index],
-                categoryTapCallback: (Category category) =>
-                    _onCategoryTap(category),
-              ),
-          itemCount: categories.length,
-        ),
+        child: categoryList,
       ),
       frontTitle: Text(_currentCategory.name),
       backTitle: Text("Select a category"),
