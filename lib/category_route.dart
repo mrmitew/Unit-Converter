@@ -23,6 +23,8 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
+  // TODO: Keep track of a default [Category], and the currently-selected
+
   static final _mainColor = Colors.green[100];
 
   static const _categoryNames = <String>[
@@ -87,6 +89,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
   @override
   void initState() {
     super.initState();
+    // TODO: Set the default [Category] for the unit converter that opens
     for (var i = 0; i < _categoryNames.length; i++) {
       final category = Category(
           categoryName: _categoryNames[i],

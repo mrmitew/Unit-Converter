@@ -62,7 +62,11 @@ class _ConverterRouteState extends State<UnitConverter> {
   void initState() {
     super.initState();
     _buildDropDownMenuItems();
+    // TODO: _setDefaults()
   }
+
+  // TODO: _createDropdownMenuItems() and _setDefaults() should also be called
+  // each time the user switches [Categories].
 
   void _buildDropDownMenuItems() {
     // Here is just a placeholder for a list of mock units
