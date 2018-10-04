@@ -1,5 +1,5 @@
-name: hello_rectangle
-description: A new Flutter project.
+name: unit_converter
+description: Stateful unit converter app, that lets you choose a set of categories, each of which has a set of units, and lets you convert from one to another using realtime dynamic conversions. Categories and their corresponding units are loaded from json and a backend API.
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43

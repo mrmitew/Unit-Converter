@@ -8,8 +8,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:hello_rectangle/category.dart';
-import 'package:hello_rectangle/unit.dart';
+import 'package:unit_converter/category.dart';
+import 'package:unit_converter/unit.dart';
 
 /// The REST API retrieves unit conversions for [Categories] that change.
 ///

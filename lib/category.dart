@@ -5,7 +5,7 @@
 // To keep your imports tidy, follow the ordering guidelines at
 // https://www.dartlang.org/guides/language/effective-dart/style#ordering
 import 'package:flutter/material.dart';
-import 'package:hello_rectangle/unit.dart';
+import 'package:unit_converter/unit.dart';
 
 class Category {
   final String name;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hello_rectangle/category.dart';
+import 'package:unit_converter/category.dart';
 
 typedef void CategoryTapCallback(Category category);
 
