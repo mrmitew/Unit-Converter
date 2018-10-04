@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hello_rectangle/backdrop.dart';
 import 'package:hello_rectangle/category.dart';
@@ -24,11 +27,11 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
-  // TODO: Keep track of a default [Category], and the currently-selected
 
   static final _mainColor = Colors.green[100];
   static const defaultCategoryIndex = 0;
 
+  // TODO: Remove _categoryNames as they will be retrieved from the JSON asset
   static const _categoryNames = <String>[
     'Length',
     'Area',
@@ -79,6 +82,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   final _categories = <Category>[];
   Category _currentCategory;
 
+  // TODO: Delete this function; instead, read in the units from the JSON asset
+  // inside _retrieveLocalCategories()
   /// Returns a list of mock [Unit]s.
   List<Unit> _retrieveUnitList(String categoryName) =>
       List.generate(10, (int i) {
@@ -89,6 +94,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
         );
       });
 
+  // TODO: Remove the overriding of initState(). Instead, we use
+  // didChangeDependencies()
   @override
   void initState() {
     super.initState();
@@ -103,6 +110,32 @@ class _CategoryRouteState extends State<CategoryRoute> {
     }
 
     _currentCategory = _categories[defaultCategoryIndex];
+  }
+
+  // TODO: Uncomment this out. We use didChangeDependencies() so that we can
+  // wait for our JSON asset to be loaded in (async).
+  //  @override
+  //  Future<void> didChangeDependencies() async {
+  //    super.didChangeDependencies();
+  //    // We have static unit conversions located in our
+  //    // assets/data/regular_units.json
+  //    if (_categories.isEmpty) {
+  //      await _retrieveLocalCategories();
+  //    }
+  //  }
+
+  /// Retrieves a list of [Categories] and their [Unit]s
+  Future<void> _retrieveLocalCategories() async {
+    // Consider omitting the types for local variables. For more details on Effective
+    // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
+    final json = DefaultAssetBundle
+        .of(context)
+        .loadString('assets/data/regular_units.json');
+    final data = JsonDecoder().convert(await json);
+    if (data is! Map) {
+      throw ('Data retrieved from API is not a Map');
+    }
+    // TODO: Create Categories and their list of Units, from the JSON asset
   }
 
   Widget _buildCategoryTileWidgets() {
