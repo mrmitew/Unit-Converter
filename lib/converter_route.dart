@@ -35,7 +35,8 @@ class _UnitConverterState extends State<UnitConverter> {
 
   List<DropdownMenuItem<Unit>> _unitWidgets;
 
-  // TODO: Pass this into the TextField so that the input value persists
+  // Used in the input TextField so that the input value persists on orientation change
+  // and also that keeps the keyboard shown if the widget is rebuilt meanwhile
   final _inputKey = GlobalKey(debugLabel: 'inputText');
 
   /// Clean up conversion; trim trailing zeros, e.g. 5.500 -> 5.5, 10.0 -> 10
@@ -107,16 +108,17 @@ class _UnitConverterState extends State<UnitConverter> {
 
   @override
   Widget build(BuildContext context) {
-    var unitInput1 =
+    final unitInput1 =
         buildUnitInput(context, onFromUnitChanged, _covertFromUnit);
-    var unitInput2 = buildUnitInput(context, onToUnitChanged, _covertToUnit);
+    final unitInput2 = buildUnitInput(context, onToUnitChanged, _covertToUnit);
 
-    var fromGroup = Padding(
+    final fromGroup = Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           TextField(
+            key: _inputKey,
             controller: TextEditingController(text: _convertFromValue),
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
@@ -132,7 +134,7 @@ class _UnitConverterState extends State<UnitConverter> {
       ),
     );
 
-    var toGroup = Padding(
+    final toGroup = Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -152,7 +154,7 @@ class _UnitConverterState extends State<UnitConverter> {
       ),
     );
 
-    var compareArrows = RotatedBox(
+    final compareArrows = RotatedBox(
       quarterTurns: 1,
       child: Icon(
         Icons.compare_arrows,
@@ -160,18 +162,26 @@ class _UnitConverterState extends State<UnitConverter> {
       ),
     );
 
-    // TODO: Use an OrientationBuilder to add a width to the unit converter
-    // in landscape mode
-
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          fromGroup,
-          compareArrows,
-          toGroup,
-        ],
-      ),
+    final converter = ListView(
+      children: <Widget>[
+        fromGroup,
+        compareArrows,
+        toGroup,
+      ],
     );
+
+    return OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+      var converterWrapper;
+      if (orientation == Orientation.landscape) {
+        converterWrapper =
+            Center(child: Container(width: 450.0, child: converter));
+      } else {
+        converterWrapper = converter;
+      }
+
+      return converterWrapper;
+    });
   }
 
   Container buildUnitInput(BuildContext context,
