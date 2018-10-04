@@ -27,21 +27,8 @@ class CategoryRoute extends StatefulWidget {
 }
 
 class _CategoryRouteState extends State<CategoryRoute> {
-
   static final _mainColor = Colors.green[100];
   static const defaultCategoryIndex = 0;
-
-  // TODO: Remove _categoryNames as they will be retrieved from the JSON asset
-  static const _categoryNames = <String>[
-    'Length',
-    'Area',
-    'Volume',
-    'Mass',
-    'Time',
-    'Digital Storage',
-    'Energy',
-    'Currency',
-  ];
 
   static const _baseColors = <ColorSwatch>[
     ColorSwatch(0xFF6AB7A8, {
@@ -81,61 +68,49 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
   final _categories = <Category>[];
   Category _currentCategory;
+  Category _defaultCategory;
 
-  // TODO: Delete this function; instead, read in the units from the JSON asset
-  // inside _retrieveLocalCategories()
-  /// Returns a list of mock [Unit]s.
-  List<Unit> _retrieveUnitList(String categoryName) =>
-      List.generate(10, (int i) {
-        i += 1;
-        return Unit(
-          name: '$categoryName Unit $i',
-          conversion: i.toDouble(),
-        );
-      });
-
-  // TODO: Remove the overriding of initState(). Instead, we use
-  // didChangeDependencies()
   @override
-  void initState() {
-    super.initState();
-
-    for (var i = 0; i < _categoryNames.length; i++) {
-      final category = Category(
-          name: _categoryNames[i],
-          icon: Icons.cake,
-          color: _baseColors[i],
-          units: _retrieveUnitList(_categoryNames[i]));
-      _categories.add(category);
+  Future<void> didChangeDependencies() async {
+    super.didChangeDependencies();
+    // We have static unit conversions located in our
+    // assets/data/regular_units.json
+    if (_categories.isEmpty) {
+      await _retrieveLocalCategories();
     }
-
-    _currentCategory = _categories[defaultCategoryIndex];
   }
-
-  // TODO: Uncomment this out. We use didChangeDependencies() so that we can
-  // wait for our JSON asset to be loaded in (async).
-  //  @override
-  //  Future<void> didChangeDependencies() async {
-  //    super.didChangeDependencies();
-  //    // We have static unit conversions located in our
-  //    // assets/data/regular_units.json
-  //    if (_categories.isEmpty) {
-  //      await _retrieveLocalCategories();
-  //    }
-  //  }
 
   /// Retrieves a list of [Categories] and their [Unit]s
   Future<void> _retrieveLocalCategories() async {
     // Consider omitting the types for local variables. For more details on Effective
     // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
-    final json = DefaultAssetBundle
-        .of(context)
-        .loadString('assets/data/regular_units.json');
+    final json = DefaultAssetBundle.of(context).loadString('assets/data/units.json');
     final data = JsonDecoder().convert(await json);
     if (data is! Map) {
       throw ('Data retrieved from API is not a Map');
     }
-    // TODO: Create Categories and their list of Units, from the JSON asset
+
+    var categoryIteration = 0;
+    data.keys.forEach((key) {
+      final List<Unit> units =
+          data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
+
+      final category = Category(
+        name: key,
+        units: units,
+        color: _baseColors[categoryIteration],
+        icon: Icons.cake,
+      );
+
+      setState(() {
+        if (categoryIteration == defaultCategoryIndex) {
+          _defaultCategory = category;
+        }
+        _categories.add(category);
+      });
+
+      categoryIteration += 1;
+    });
   }
 
   Widget _buildCategoryTileWidgets() {
@@ -165,14 +140,17 @@ class _CategoryRouteState extends State<CategoryRoute> {
       },
     );
 
+    var category =
+        _currentCategory == null ? _defaultCategory : _currentCategory;
+
     return Backdrop(
-      currentCategory: _currentCategory,
-      frontPanel: UnitConverter(category: _currentCategory),
+      currentCategory: category,
+      frontPanel: UnitConverter(category: category),
       backPanel: Padding(
         padding: const EdgeInsets.only(bottom: 48.0),
         child: categoryList,
       ),
-      frontTitle: Text(_currentCategory.name),
+      frontTitle: Text(category.name),
       backTitle: Text("Select a category"),
     );
   }
