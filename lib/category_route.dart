@@ -6,10 +6,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:hello_rectangle/api.dart';
 import 'package:hello_rectangle/backdrop.dart';
 import 'package:hello_rectangle/category.dart';
 import 'package:hello_rectangle/category_tile.dart';
-import 'package:hello_rectangle/converter_route.dart';
+import 'package:hello_rectangle/unit_converter.dart';
 import 'package:hello_rectangle/unit.dart';
 
 /// Category Route (screen).
@@ -77,6 +78,7 @@ class _CategoryRouteState extends State<CategoryRoute> {
     // assets/data/regular_units.json
     if (_categories.isEmpty) {
       await _retrieveLocalCategories();
+      await _retrieveRemoteCategories();
     }
   }
 
@@ -84,8 +86,8 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Future<void> _retrieveLocalCategories() async {
     // Consider omitting the types for local variables. For more details on Effective
     // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
-    final json =
-        DefaultAssetBundle.of(context).loadString('assets/data/categories.json');
+    final json = DefaultAssetBundle.of(context)
+        .loadString('assets/data/categories.json');
     final data = JsonDecoder().convert(await json);
 
     if (data is! Map) {
@@ -116,6 +118,39 @@ class _CategoryRouteState extends State<CategoryRoute> {
 
       categoryIteration += 1;
     });
+  }
+
+  /// Retrieves a [Category] and its [Unit]s from an API on the web
+  Future<void> _retrieveRemoteCategories() async {
+    var category = Category(
+      name: Api.supportedCategories[0]["name"],
+      units: [],
+      color: _baseColors.last,
+      iconLocation: 'assets/icons/currency.png',
+    );
+
+    // Add a placeholder while we fetch the Currency category using the API
+    setState(() {
+      _categories.add(category);
+    });
+
+    // TODO: Provide as a dependency
+    final api = Api();
+
+    final units = await api.getUnits(category);
+    // If the API errors out or we have no internet connection, this category
+    // remains in placeholder mode (disabled)
+    if (units != null) {
+      setState(() {
+        _categories.remove(category);
+        _categories.add(Category(
+          name: Api.supportedCategories[0]["name"],
+          units: units,
+          color: _baseColors.last,
+          iconLocation: 'assets/icons/currency.png',
+        ));
+      });
+    }
   }
 
   Widget _buildCategoryTileWidgets() {

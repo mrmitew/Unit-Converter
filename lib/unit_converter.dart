@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:hello_rectangle/api.dart';
 import 'package:hello_rectangle/category.dart';
 import 'package:hello_rectangle/unit.dart';
 import 'package:meta/meta.dart';
@@ -71,9 +74,6 @@ class _UnitConverterState extends State<UnitConverter> {
       _setDefaults();
     }
   }
-
-  // TODO: _createDropdownMenuItems() and _setDefaults() should also be called
-  // each time the user switches [Categories].
 
   /// Sets the default values for the 'from' and 'to' [Dropdown]s, and the
   /// updated output value if a user had previously entered an input.
@@ -230,11 +230,22 @@ class _UnitConverterState extends State<UnitConverter> {
     _updateConversion();
   }
 
-  void _updateConversion() {
-    setState(() {
-      _convertedValue = _format(
-          _input * (_covertToUnit.conversion / _covertFromUnit.conversion));
-    });
+  Future<void> _updateConversion() async {
+    // TODO: Provide the API as a dependency
+    final api = Api();
+
+    if (api.isCategorySupported(widget.category)) {
+      final conversion = await api.convert(widget.category, _input.toString(),
+          _covertFromUnit.name, _covertToUnit.name);
+      setState(() {
+        _convertedValue = _format(conversion);
+      });
+    } else {
+      setState(() {
+        _convertedValue = _format(
+            _input * (_covertToUnit.conversion / _covertFromUnit.conversion));
+      });
+    }
   }
 
   void onToUnitChanged(Unit value) {
