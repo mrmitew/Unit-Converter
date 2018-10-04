@@ -84,22 +84,27 @@ class _CategoryRouteState extends State<CategoryRoute> {
   Future<void> _retrieveLocalCategories() async {
     // Consider omitting the types for local variables. For more details on Effective
     // Dart Usage, see https://www.dartlang.org/guides/language/effective-dart/usage
-    final json = DefaultAssetBundle.of(context).loadString('assets/data/units.json');
+    final json =
+        DefaultAssetBundle.of(context).loadString('assets/data/categories.json');
     final data = JsonDecoder().convert(await json);
+
     if (data is! Map) {
       throw ('Data retrieved from API is not a Map');
     }
 
+    final List categories = data["categories"];
     var categoryIteration = 0;
-    data.keys.forEach((key) {
-      final List<Unit> units =
-          data[key].map<Unit>((dynamic data) => Unit.fromJson(data)).toList();
+
+    categories.forEach((cat) {
+      final List<Unit> units = cat["units"]
+          .map<Unit>((dynamic data) => Unit.fromJson(data))
+          .toList();
 
       final category = Category(
-        name: key,
+        name: cat["name"],
         units: units,
         color: _baseColors[categoryIteration],
-        icon: Icons.cake,
+        iconLocation: cat["iconLocation"],
       );
 
       setState(() {

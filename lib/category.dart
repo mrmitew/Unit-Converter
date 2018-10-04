@@ -9,7 +9,7 @@ import 'package:hello_rectangle/unit.dart';
 
 class Category {
   final String name;
-  final IconData icon;
+  final String iconLocation;
   final ColorSwatch color;
   final List<Unit> units;
 
@@ -19,11 +19,11 @@ class Category {
   /// the UI, and the icon that represents it (e.g. a ruler).
   const Category(
       {@required this.name,
-      @required this.icon,
+      @required this.iconLocation,
       @required this.color,
       @required this.units})
       : assert(name != null),
-        assert(icon != null),
+        assert(iconLocation != null),
         assert(color != null),
         assert(units != null);
 }
