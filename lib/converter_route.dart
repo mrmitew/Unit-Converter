@@ -21,10 +21,10 @@ class UnitConverter extends StatefulWidget {
   }) : assert(category != null);
 
   @override
-  State<StatefulWidget> createState() => _ConverterRouteState();
+  State<StatefulWidget> createState() => _UnitConverterState();
 }
 
-class _ConverterRouteState extends State<UnitConverter> {
+class _UnitConverterState extends State<UnitConverter> {
   Unit _covertFromUnit;
   Unit _covertToUnit;
   double _input;
@@ -34,6 +34,9 @@ class _ConverterRouteState extends State<UnitConverter> {
   String _convertedValue = "";
 
   List<DropdownMenuItem<Unit>> _unitWidgets;
+
+  // TODO: Pass this into the TextField so that the input value persists
+  final _inputKey = GlobalKey(debugLabel: 'inputText');
 
   /// Clean up conversion; trim trailing zeros, e.g. 5.500 -> 5.5, 10.0 -> 10
   String _format(double conversion) {
@@ -157,15 +160,18 @@ class _ConverterRouteState extends State<UnitConverter> {
       ),
     );
 
-    final body = Column(
-      children: <Widget>[
-        fromGroup,
-        compareArrows,
-        toGroup,
-      ],
-    );
+    // TODO: Use an OrientationBuilder to add a width to the unit converter
+    // in landscape mode
 
-    return body;
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          fromGroup,
+          compareArrows,
+          toGroup,
+        ],
+      ),
+    );
   }
 
   Container buildUnitInput(BuildContext context,
